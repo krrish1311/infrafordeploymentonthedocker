@@ -1,0 +1,40 @@
+version: "1"
+services:
+        mysqlos:
+             image: mysql
+             volumes:
+                     - mysql_storage:/var/lib/mysql
+             restart: always
+             environment:
+                   MYSQL_ROOT_PASSWORD: redhat
+                   MYSQL_USER: krrish
+                   MYSQL_PASSWORD: redhat
+                   MYSQL_DATABASE: backend_demo
+              
+        mongoos:
+              image: mongo
+              volumes:
+                     - mongo_storage:/data/db
+              restart: always
+              ports:
+                      - 27017:27017 
+              environment:
+                    MONGO_INITDB_ROOT_USERNAME: admin
+                    MONGO_INITDB_ROOT_PASSWORD: redhat
+                    MONGO_INITDB_DATABASE: backend_demo
+
+        restapi:
+              image: nodeapi
+              restart: always
+              depends_on:
+                      - mysqlos
+                      - mongoos
+              ports:
+                      - 51005:51005
+              environment:
+                       MYSQL_HOST: mysqlos
+                       MONGO_HOST: mongoos
+
+volumes:
+     mysql_storage:
+     mongo_storage:        
